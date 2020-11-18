@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "diputado-distrito"
+version = "0.1.0"
+description = ""
+authors = ["Nacho Platon <iplaton@geoblink.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+jupyterlab = "^2.2"
+geopandas = "^0.8.1"
+keplergl = "^0.2.1"
+psycopg2-binary = "^2.8"
+descartes = "^1.1"
+gerrychain = "^0.2.12"
+tqdm = "^4.52"
+Rtree = "^0.9.4"
+pyproj = "=2.2.0"
+pyarrow = "^2.0"
+maup = "^0.7.0"
+sqlalchemy = "^1.3"
+geoalchemy2 = "^0.8.4"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
