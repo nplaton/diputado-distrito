@@ -1,4 +1,0 @@
-geopandas==0.8.1
-gerrychain==0.2.12
-keplergl==0.2.1
-psycopg2-binary==2.8.6
