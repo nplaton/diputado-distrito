@@ -4,6 +4,7 @@ import time
 
 import papermill as pm
 import unidecode
+import pandas as pd
 
 
 PROVINCE_MAPPER = {
@@ -62,23 +63,24 @@ PROVINCE_MAPPER = {
 }
 
 # When being run in colab please set to False
-QUERY_POSTGRES = True
+QUERY_POSTGRES = False
 
 # Define seed
 SEED = 42
 
 # GerryChain parameters
-
 # Wanted district size in population
-TARGET = 33000
+TARGET = 120000
 # Variable which we are using to create district over target value
 VARIABLE = "pob_t_total"
 # Parameter for spanning tree method, set to 2 is fine
-NODE_REPEATS = 2
+NODE_REPEATS = 3
 # Epson tolerance for map to initialize
-INIT_EPSILON = 0.4
+INIT_EPSILON = 1
 # Error tolerance for districts
-EPSILION = 0.3
+EPSILION = 1
+# Percentage difference between populations mac vs low
+PARTITION_PERCENTAGE = 2
 # Maximum number of possible values
 TOTAL_STEPS = 56
 
@@ -90,7 +92,7 @@ subprocess.call(['mkdir', 'notebooks'])
 subprocess.call(['mkdir', 'maps'])
 subprocess.call(['mkdir', 'data'])
 
-
+track_status = {}
 for i, (province_id, province_name) in enumerate(PROVINCE_MAPPER.items()):
 
     print(f'\nStarting GerryChain for {province_name}')
@@ -98,6 +100,9 @@ for i, (province_id, province_name) in enumerate(PROVINCE_MAPPER.items()):
     province_name.split('/')[0].lower()
 
     province_name = unidecode.unidecode(province_name.split('/')[0].lower())
+
+    track_status.setdefault('province_id', []).append(province_id)
+    track_status.setdefault('province_name', []).append(province_name)
 
     try:
         # Perform ETL
@@ -113,12 +118,14 @@ for i, (province_id, province_name) in enumerate(PROVINCE_MAPPER.items()):
                 NODE_REPEATS=NODE_REPEATS,
                 INIT_EPSILON=INIT_EPSILON,
                 EPSILION=EPSILION,
+                PARTITION_PERCENTAGE=PARTITION_PERCENTAGE,
                 TOTAL_STEPS=TOTAL_STEPS,
                 TOP_ITERATION=TOP_ITERATION
             ),
             start_timeout=60,
             execute_timeout=90
         )
+        track_status.setdefault('status', []).append('succesful')
 
     except:
         print(
@@ -128,3 +135,7 @@ for i, (province_id, province_name) in enumerate(PROVINCE_MAPPER.items()):
             )
         )
         time.sleep(2)
+        track_status.setdefault('status', []).append('failed')
+
+# Save status in an excel
+pd.DataFrame(track_status).to_excel('province_status.xlsm', index=False)
