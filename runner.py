@@ -12,34 +12,34 @@ from config import PROVINCE_PARAMS_MAPPER
 
 def run_notebook(params, province_name, track_status, run_counter):
 
-    try:
+    # try:
         # Perform ETL
-        pm.execute_notebook(
-            input_path='diputado-distrito.ipynb',
-            output_path='notebooks/diputado-distrito-{}.ipynb'.format(province_name),
-            parameters=params,
-            start_timeout=60,
-            execute_timeout=90
-        )
-        track_status.setdefault('status', []).append('succesful')
+    pm.execute_notebook(
+        input_path='diputado-distrito.ipynb',
+        output_path='notebooks/diputado-distrito-{}.ipynb'.format(province_name),
+        parameters=params,
+        start_timeout=60,
+        execute_timeout=90
+    )
+    track_status.setdefault('status', []).append('succesful')
 
-    except:
-
-        run_counter += 1
-        if run_counter <= 10:
-            # Let's try change the seed
-            province_config['seed'] = random.randint(0, 1000)
-            run_notebook(
-                params=province_config, province_name=province_name, track_status=track_status, run_counter=run_counter
-            )
-        else:
-            print(
-                'Jupyter notebook {} failed with the following error: \n{}'.format(
-                    f'notebooks/diputado-distrito-{province_name}.ipynb',
-                    sys.exc_info()[0]
-                )
-            )
-            track_status.setdefault('status', []).append('failed')
+    # except:
+    #
+    #     run_counter += 1
+    #     if run_counter <= 15:
+    #         # Let's try change the seed
+    #         province_config['seed'] = random.randint(0, 1000)
+    #         run_notebook(
+    #             params=province_config, province_name=province_name, track_status=track_status, run_counter=run_counter
+    #         )
+    #     else:
+    #         print(
+    #             'Jupyter notebook {} failed with the following error: \n{}'.format(
+    #                 f'notebooks/diputado-distrito-{province_name}.ipynb',
+    #                 sys.exc_info()[0]
+    #             )
+    #         )
+    #         track_status.setdefault('status', []).append('failed')
 
     return track_status, params
 
@@ -51,7 +51,7 @@ subprocess.call(['mkdir', 'data'])
 
 config_tracker = []
 track_status = {}
-for i, province_config in enumerate(PROVINCE_PARAMS_MAPPER[5:]):
+for i, province_config in enumerate(PROVINCE_PARAMS_MAPPER):
 
     run_counter = 0
     province_id = province_config['province_id']
